@@ -67,8 +67,19 @@ public class Configuration {
     }
 
     public static String getServerUrl() throws IOException {
-        return getConfig().getProperty("serverUrl");
+        String url = String.format("http://%s:%s/wd/hub",
+                getServerIp(), getServerPort());
+        return url;
     }
+
+    public static String getServerIp() throws IOException {
+        return getConfig().getProperty("serverIP");
+    }
+
+    public static String getServerPort() throws IOException {
+        return getConfig().getProperty("serverPort");
+    }
+
 
     public static String getAppPackage() throws IOException {
         return getConfig().getProperty("appPackage");
