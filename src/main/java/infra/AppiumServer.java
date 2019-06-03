@@ -2,12 +2,14 @@ package infra;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.ServerSocket;
+import java.net.URL;
+import java.util.concurrent.TimeUnit;
 
-import org.openqa.selenium.remote.DesiredCapabilities;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.appium.java_client.service.local.flags.GeneralServerFlag;
+import org.openqa.selenium.net.UrlChecker;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 public class AppiumServer {
 
@@ -35,19 +37,16 @@ public class AppiumServer {
         service.stop();
     }
 
-    public boolean checkIfServerIsRunning(int port) {
+    public boolean checkIsServerRunning(long timeoutMs) throws IOException {
 
-        boolean isServerRunning = false;
-        ServerSocket serverSocket;
+        String SERVER_URL = Configuration.getServerUrl();
+        final URL status = new URL(SERVER_URL + "/sessions");
         try {
-            serverSocket = new ServerSocket(port);
-            serverSocket.close();
-        } catch (IOException e) {
-            isServerRunning = true;
-        } finally {
-            serverSocket = null;
+            new UrlChecker().waitUntilAvailable(timeoutMs, TimeUnit.MILLISECONDS, status);
+            return true;
+        } catch (UrlChecker.TimeoutException e) {
+            return false;
         }
-        return isServerRunning;
     }
 
 }
