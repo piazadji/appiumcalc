@@ -12,7 +12,7 @@ public class HistoryPage extends BasePage {
         super(driver);
     }
 
-    @AndroidFindBy(id = "UIAKeyboard")
+    @AndroidFindBy(id = "com.android.calculator2:id/history_formula")
     private List<AndroidElement> historyFormulas;
 
     public int getHistoryFormulasCount() {

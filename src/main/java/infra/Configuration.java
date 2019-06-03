@@ -15,7 +15,7 @@ public class Configuration {
     }
 
     private static Properties getConfig() throws IOException {
-        if (config == null) {
+        if (config.size() == 0) {
             config = initConfiguration();
         }
         return config;
@@ -24,8 +24,9 @@ public class Configuration {
     private static Properties initConfiguration() throws IOException {
         InputStream iStream = null;
         try {
-            FileInputStream inputStream = new FileInputStream("src/test/resources/config.properties");
+            FileInputStream inputStream = new FileInputStream("src/test/resources/config/config.properties");
             config.load(inputStream);
+            inputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
             LOGGER.severe("File doesn't exists");
@@ -33,7 +34,7 @@ public class Configuration {
         return config;
     }
 
-    static String getDeviceName() throws IOException {
+    public static String getDeviceName() throws IOException {
         return getConfig().getProperty("deviceName");
     }
 
@@ -41,7 +42,7 @@ public class Configuration {
         getConfig().setProperty("deviceName", name);
     }
 
-    static String getudid() throws IOException {
+    public static String getudid() throws IOException {
         return getConfig().getProperty("udid");
     }
 
@@ -49,7 +50,7 @@ public class Configuration {
         getConfig().setProperty("udid", id);
     }
 
-    static String getPlatformName() throws IOException {
+    public static String getPlatformName() throws IOException {
         return getConfig().getProperty("platformName");
     }
 
@@ -57,7 +58,7 @@ public class Configuration {
         getConfig().setProperty("platformName", name);
     }
 
-    static String getPlatformVersion() throws IOException {
+    public static String getPlatformVersion() throws IOException {
         return getConfig().getProperty("platformVersion");
     }
 
@@ -65,19 +66,23 @@ public class Configuration {
         getConfig().setProperty("platformVersion", version);
     }
 
-    static String getServerUrl() throws IOException {
+    public static String getServerUrl() throws IOException {
         return getConfig().getProperty("serverUrl");
     }
 
-    static String getAppPackage() throws IOException {
+    public static String getAppPackage() throws IOException {
         return getConfig().getProperty("appPackage");
     }
 
-    static String skipUnlock() throws IOException {
+    public static String getAppActivity() throws IOException {
+        return getConfig().getProperty("appActivity");
+    }
+
+    public static String skipUnlock() throws IOException {
         return getConfig().getProperty("skipUnlock");
     }
 
-    static String noReset() throws IOException {
+    public static String noReset() throws IOException {
         return getConfig().getProperty("noReset");
     }
 }

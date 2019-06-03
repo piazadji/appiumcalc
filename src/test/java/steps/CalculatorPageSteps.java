@@ -3,7 +3,6 @@ package steps;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import io.appium.java_client.android.AndroidDriver;
 import org.hamcrest.Matcher;
 import pages.CalculatorPage;
 
@@ -11,12 +10,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
-public class CalculatorPageSteps extends BaseSteps {
+public class CalculatorPageSteps extends ContextSteps {
+    private ContextSteps contextSteps;
     private CalculatorPage calculatorPage;
 
-    public CalculatorPageSteps(AndroidDriver driver) {
-        super(driver);
-        this.calculatorPage = new CalculatorPage(driver);
+    public CalculatorPageSteps(ContextSteps context) {
+        this.contextSteps = context;
+        this.calculatorPage = new CalculatorPage(contextSteps.getDriver());
     }
 
     @Given("I see calculator opened")
@@ -45,7 +45,7 @@ public class CalculatorPageSteps extends BaseSteps {
         assertThat(String.format("SIN of %s should be equal to %s", a, result), calculatorPage.sinOf(a), is(result));
     }
 
-    @When("I select '(History|Answer as fraction)' item in more menu")
+    @When("^I select '(History|Answer as fraction)' item in more menu$")
     public void I_open_calculator_history(String item) {
         calculatorPage.selectMoreMenuItem(item);
     }

@@ -7,13 +7,13 @@ import pages.HistoryPage;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class HistoryPageSteps extends BaseSteps {
-
+public class HistoryPageSteps extends ContextSteps {
+    private ContextSteps contextSteps;
     private HistoryPage historyPage;
 
-    public HistoryPageSteps(AndroidDriver driver) {
-        super(driver);
-        this.historyPage = new HistoryPage(driver);
+    public HistoryPageSteps(ContextSteps context) {
+        this.contextSteps = context;
+        this.historyPage = new HistoryPage(contextSteps.getDriver());
     }
 
     @Then("I see '(\\d+)' formulas? in History")
