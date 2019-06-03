@@ -3,6 +3,7 @@ package infra;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 import io.appium.java_client.service.local.AppiumDriverLocalService;
@@ -17,14 +18,14 @@ public class AppiumServer {
     private AppiumServiceBuilder builder;
     private DesiredCapabilities cap;
 
-    public void startServer() throws IOException {
+    public void startServer() {
         cap = new DesiredCapabilities();
         cap.setCapability("noReset", "false");
 
         builder = new AppiumServiceBuilder();
         builder.withAppiumJS(new File("/usr/local/lib/node_modules/appium/build/lib/main.js"));
         builder.withIPAddress(Configuration.getServerIp());
-        builder.usingPort(Integer.parseInt(Configuration.getServerPort()));
+        builder.usingPort(Configuration.getServerPort());
         builder.withCapabilities(cap);
         builder.withArgument(GeneralServerFlag.SESSION_OVERRIDE);
         builder.withArgument(GeneralServerFlag.LOG_LEVEL,"error");
@@ -37,12 +38,10 @@ public class AppiumServer {
         service.stop();
     }
 
-    public boolean checkIsServerRunning(long timeoutMs) throws IOException {
-
-        String SERVER_URL = Configuration.getServerUrl();
-        final URL status = new URL(SERVER_URL + "/sessions");
+    public boolean checkIsServerRunning(Duration timeoutMs) throws IOException {
+        final URL status = new URL(Configuration.getServerUrl() + "/sessions");
         try {
-            new UrlChecker().waitUntilAvailable(timeoutMs, TimeUnit.MILLISECONDS, status);
+            new UrlChecker().waitUntilAvailable(timeoutMs.toMillis(), TimeUnit.MILLISECONDS, status);
             return true;
         } catch (UrlChecker.TimeoutException e) {
             return false;

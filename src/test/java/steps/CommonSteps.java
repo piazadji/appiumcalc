@@ -1,6 +1,7 @@
 package steps;
 
 import java.io.IOException;
+import java.time.Duration;
 
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
@@ -17,7 +18,7 @@ public class CommonSteps extends ContextSteps {
 
     @Before
     public void beforeScenario() throws IOException {
-        if (!appiumServer.checkIsServerRunning(2000)) {
+        if (!appiumServer.checkIsServerRunning(Duration.ofMillis(2000))) {
             appiumServer.startServer();
         }
         driver = new ContextSteps().getDriver();
