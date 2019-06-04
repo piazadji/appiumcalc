@@ -1,7 +1,8 @@
 package infra;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
@@ -21,12 +22,13 @@ public class AppiumServer {
         cap.setCapability("noReset", "false");
 
         AppiumServiceBuilder builder = new AppiumServiceBuilder();
-        builder.withAppiumJS(new File("/usr/local/lib/node_modules/appium/build/lib/main.js"));
+
+        builder.withAppiumJS(new File(Configuration.getAppiumPath()));
         builder.withIPAddress(Configuration.getServerIp());
         builder.usingPort(Configuration.getServerPort());
         builder.withCapabilities(cap);
         builder.withArgument(GeneralServerFlag.SESSION_OVERRIDE);
-        builder.withArgument(GeneralServerFlag.LOG_LEVEL,"error");
+        builder.withArgument(GeneralServerFlag.LOG_LEVEL, "error");
 
         service = AppiumDriverLocalService.buildService(builder);
         service.start();
@@ -36,13 +38,15 @@ public class AppiumServer {
         service.stop();
     }
 
-    public boolean checkIsServerRunning(Duration timeoutMs) throws IOException {
-        final URL status = new URL(Configuration.getServerUrl() + "/sessions");
+    public boolean checkIsServerRunning(Duration timeout) {
         try {
-            new UrlChecker().waitUntilAvailable(timeoutMs.toMillis(), TimeUnit.MILLISECONDS, status);
+            URL status = new URL(Configuration.getServerUrl() + "/sessions");
+            new UrlChecker().waitUntilAvailable(timeout.toMillis(), TimeUnit.MILLISECONDS, status);
             return true;
         } catch (UrlChecker.TimeoutException e) {
             return false;
+        } catch (MalformedURLException e) {
+            throw new UncheckedIOException("Can't parse URL", e);
         }
     }
 

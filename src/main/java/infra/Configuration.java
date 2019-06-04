@@ -2,7 +2,7 @@ package infra;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -11,7 +11,8 @@ public class Configuration {
     private static final Logger LOGGER = Logger.getLogger(Configuration.class.getName());
     private static Properties config = new Properties();
 
-    public Configuration() {
+    private Configuration() {
+        throw new AssertionError("This class should not have instances");
     }
 
     private static Properties getConfig() {
@@ -22,15 +23,18 @@ public class Configuration {
     }
 
     private static Properties initConfiguration() {
-        try {
-            FileInputStream inputStream = new FileInputStream("src/test/resources/config/config.properties");
+        try (FileInputStream inputStream = new FileInputStream("src/test/resources/config/config.properties")) {
             config.load(inputStream);
-            inputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
             LOGGER.severe("File doesn't exists");
+            throw new UncheckedIOException("Properties file read problems", e);
         }
         return config;
+    }
+
+    public static String getAppiumPath() {
+        return getConfig().getProperty("appiumPath");
     }
 
     public static String getDeviceName() {
