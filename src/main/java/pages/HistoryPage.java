@@ -1,14 +1,15 @@
 package pages;
 
-import io.appium.java_client.android.AndroidDriver;
+import java.util.List;
+
+import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidElement;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 
-import java.util.List;
-
 public class HistoryPage extends BasePage {
 
-    public HistoryPage(AndroidDriver driver) {
+    public HistoryPage(AppiumDriver<MobileElement> driver) {
         super(driver);
     }
 

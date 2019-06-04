@@ -48,6 +48,13 @@ public class CalculatorPage extends BasePage {
         return mainPage.isDisplayed();
     }
 
+    /**
+     * Sum of two numbers
+     *
+     * @param a first number String
+     * @param b second number String
+     * @return result of the sum
+     */
     public String sumOf(String a, String b) {
         inputDigit(a);
         tapAddButton();
@@ -56,6 +63,13 @@ public class CalculatorPage extends BasePage {
         return getResult();
     }
 
+    /**
+     * Substitution of two numbers
+     *
+     * @param a first number String
+     * @param b second number String
+     * @return result of the substitution
+     */
     public String subOf(String a, String b) {
         inputDigit(a);
         tapMinusButton();
@@ -64,6 +78,14 @@ public class CalculatorPage extends BasePage {
         return getResult();
     }
 
+    /**
+     * Calculation of (a-b)*m
+     *
+     * @param a first number String
+     * @param b second number String
+     * @param m multiplier String
+     * @return result of the (a-b)*m
+     */
     public String subAndMultiply(String a, String b, String m) {
         expandScientific();
         getButton("(").click();
@@ -80,6 +102,12 @@ public class CalculatorPage extends BasePage {
         return getResult();
     }
 
+    /**
+     * Calculation of sin(a)
+     *
+     * @param a string of RAD
+     * @return result of sin(a)
+     */
     public String sinOf(String a) {
         expandScientific();
         getButton("sin").click();
@@ -90,13 +118,18 @@ public class CalculatorPage extends BasePage {
         return getResult();
     }
 
+    /**
+     * Click on the button to open more menu  and select and item from More menu
+     *
+     * @param item title string
+     */
     public void selectMoreMenuItem(String item) {
         result.click();
         DriverHelper.waitForClickableElement(driver, moreButton, 3);
         moreButton.click();
         clickMoreMenu(item);
     }
-
+    
     private void clickMoreMenu(String menu) {
         WebElement button = moreMenu.stream().filter(item -> item.getText().equalsIgnoreCase(menu)).findAny().orElse(null);
         assert button != null;
