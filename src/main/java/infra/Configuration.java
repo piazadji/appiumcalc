@@ -22,7 +22,6 @@ public class Configuration {
     }
 
     private static Properties initConfiguration() {
-        InputStream iStream = null;
         try {
             FileInputStream inputStream = new FileInputStream("src/test/resources/config/config.properties");
             config.load(inputStream);

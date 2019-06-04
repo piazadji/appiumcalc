@@ -15,14 +15,12 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 public class AppiumServer {
 
     private AppiumDriverLocalService service;
-    private AppiumServiceBuilder builder;
-    private DesiredCapabilities cap;
 
     public void startServer() {
-        cap = new DesiredCapabilities();
+        DesiredCapabilities cap = new DesiredCapabilities();
         cap.setCapability("noReset", "false");
 
-        builder = new AppiumServiceBuilder();
+        AppiumServiceBuilder builder = new AppiumServiceBuilder();
         builder.withAppiumJS(new File("/usr/local/lib/node_modules/appium/build/lib/main.js"));
         builder.withIPAddress(Configuration.getServerIp());
         builder.usingPort(Configuration.getServerPort());
