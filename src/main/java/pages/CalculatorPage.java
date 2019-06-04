@@ -4,9 +4,10 @@ import infra.DriverHelper;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.pagefactory.AndroidFindBy;
-import org.openqa.selenium.WebElement;
 
+import java.time.Duration;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class CalculatorPage extends BasePage {
 
@@ -15,39 +16,59 @@ public class CalculatorPage extends BasePage {
     }
 
     @AndroidFindBy(id = "com.android.calculator2:id/drag_layout")
-    private WebElement mainPage;
+    private MobileElement pageContainer;
 
     @AndroidFindBy(className = "android.widget.Button")
-    private List<WebElement> calcButtons;
+    private List<MobileElement> calcButtons;
 
     @AndroidFindBy(id = "com.android.calculator2:id/result")
-    private WebElement result;
+    private MobileElement result;
 
     @AndroidFindBy(id = "com.android.calculator2:id/pad_advanced")
-    private WebElement scientificExpandButton;
+    private MobileElement scientificExpandButton;
 
     @AndroidFindBy(className = "android.widget.ImageButton")
-    private WebElement moreButton;
+    private MobileElement moreButton;
 
     @AndroidFindBy(id = "android:id/title")
-    private List<WebElement> moreMenu;
+    private List<MobileElement> moreMenuOptions;
 
     @AndroidFindBy(id = "com.android.calculator2:id/op_mul")
-    private WebElement multButton;
+    private MobileElement multButton;
 
     @AndroidFindBy(id = "com.android.calculator2:id/op_sub")
-    private WebElement subButton;
+    private MobileElement subButton;
 
     @AndroidFindBy(id = "com.android.calculator2:id/op_add")
-    private WebElement addButton;
+    private MobileElement addButton;
 
     @AndroidFindBy(id = "com.android.calculator2:id/eq")
-    private WebElement resultButton;
+    private MobileElement resultButton;
+
+    @AndroidFindBy(id = "com.android.calculator2:id/lparen")
+    private MobileElement leftBracketButton;
+
+    @AndroidFindBy(id = "com.android.calculator2:id/rparen")
+    private MobileElement rightBracketButton;
+
+    @AndroidFindBy(id = "com.android.calculator2:id/fun_sin")
+    private MobileElement sinusButton;
+
+    @AndroidFindBy(id = "com.android.calculator2:id/toggle_mode")
+    private MobileElement toggleModeButton;
+
 
     public boolean isCalculatorOpened() {
-        return mainPage.isDisplayed();
+        return pageContainer.isDisplayed();
     }
 
+    /**
+     * Sum of two numbers
+     *
+     * @param a first number String
+     * @param b second number String
+     * @return result of the sum
+     */
     public String sumOf(String a, String b) {
         inputDigit(a);
         tapAddButton();
@@ -56,6 +77,13 @@ public class CalculatorPage extends BasePage {
         return getResult();
     }
 
+    /**
+     * Substitution of two numbers
+     *
+     * @param a first number String
+     * @param b second number String
+     * @return result of the substitution
+     */
     public String subOf(String a, String b) {
         inputDigit(a);
         tapMinusButton();
@@ -64,15 +92,23 @@ public class CalculatorPage extends BasePage {
         return getResult();
     }
 
+    /**
+     * Calculation of (a-b)*m
+     *
+     * @param a first number String
+     * @param b second number String
+     * @param m multiplier String
+     * @return result of the (a-b)*m
+     */
     public String subAndMultiply(String a, String b, String m) {
         expandScientific();
-        getButton("(").click();
+        tapLeftBracket();
         tapBackButton();
         inputDigit(a);
         tapMinusButton();
         inputDigit(b);
         expandScientific();
-        getButton(")").click();
+        tapRightBracket();
         tapBackButton();
         tapMultButton();
         inputDigit(m);
@@ -80,9 +116,15 @@ public class CalculatorPage extends BasePage {
         return getResult();
     }
 
+    /**
+     * Calculation of sin(a)
+     *
+     * @param a string of RAD
+     * @return result of sin(a)
+     */
     public String sinOf(String a) {
         expandScientific();
-        getButton("sin").click();
+        tapSinusButton();
         switchToDeg();
         tapBackButton();
         inputDigit(a);
@@ -90,16 +132,22 @@ public class CalculatorPage extends BasePage {
         return getResult();
     }
 
+    /**
+     * Click on the button to open more menu  and select and item from More menu
+     *
+     * @param item title string
+     */
     public void selectMoreMenuItem(String item) {
         result.click();
-        DriverHelper.waitForClickableElement(driver, moreButton, 3);
+        DriverHelper.waitForClickableElement(driver, moreButton, Duration.ofSeconds(3));
         moreButton.click();
-        clickMoreMenu(item);
+        clickMoreMenuItem(item);
     }
 
-    private void clickMoreMenu(String menu) {
-        WebElement button = moreMenu.stream().filter(item -> item.getText().equalsIgnoreCase(menu)).findAny().orElse(null);
-        assert button != null;
+    private void clickMoreMenuItem(String menuItem) {
+        MobileElement button = moreMenuOptions.stream().
+                filter(item -> item.getText().equalsIgnoreCase(menuItem)).findAny().
+                orElseThrow(() -> new NoSuchElementException(String.format("No menu item '%s' found", menuItem)));
         button.click();
     }
 
@@ -134,18 +182,29 @@ public class CalculatorPage extends BasePage {
         scientificExpandButton.click();
     }
 
+    private void tapLeftBracket() {
+        leftBracketButton.click();
+    }
+
+    private void tapRightBracket() {
+        rightBracketButton.click();
+    }
+
+    private void tapSinusButton() {
+        sinusButton.click();
+    }
+
     private void switchToDeg() {
-        getButton("DEG").click();
+        toggleModeButton.click();
     }
 
     private void tapBackButton() {
         this.driver.navigate().back();
     }
 
-    private WebElement getButton(String buttonText) {
-        WebElement button =
-                calcButtons.stream().filter(item -> item.getText().equalsIgnoreCase(buttonText)).findAny().orElse(null);
-        assert button != null;
-        return button;
+    private MobileElement getButton(String buttonText) {
+        return calcButtons.stream().
+                filter(item -> item.getText().equalsIgnoreCase(buttonText)).findAny().
+                orElseThrow(() -> new NoSuchElementException(String.format("No button with text '%s' found", buttonText)));
     }
 }

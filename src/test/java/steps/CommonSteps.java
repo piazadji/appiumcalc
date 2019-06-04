@@ -1,28 +1,33 @@
 package steps;
 
-import java.io.IOException;
+import java.time.Duration;
 
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
+import infra.AppiumServer;
+import infra.TestContext;
 
-public class CommonSteps extends ContextSteps {
+public class CommonSteps {
 
-private ContextSteps context;
+    private AppiumServer appiumServer = new AppiumServer();
+    private TestContext context;
 
-public CommonSteps(ContextSteps context) {
-    this.context = context;
-}
+    public CommonSteps(TestContext context) {
+        this.context = context;
+    }
 
     @Before
-    public void beforeScenario() throws IOException {
-        driver = new ContextSteps().getDriver();
-        initDriver();
+    public void beforeScenario() {
+        if (!appiumServer.checkIsServerRunning(Duration.ofMillis(2000))) {
+            appiumServer.startServer();
+        }
+        context.initDriver();
     }
 
     @After
     public void afterScenario() {
-        if (driver != null) {
-            driver.quit();
+        if (context.getDriver() != null) {
+            context.getDriver().quit();
         }
     }
 }
